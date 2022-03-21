@@ -19,12 +19,12 @@ class ToDoListViewController: UITableViewController {
         
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
        
-        loadItems(with: request)
+        loadItems()
     }
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         var textField = UITextField()
-        let alert = UIAlertController(title: "add new item", message: "", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Add new item", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Add item", style: .default) { action in
             
             let newItem = Item(context: self.context)
@@ -42,7 +42,7 @@ class ToDoListViewController: UITableViewController {
         present(alert, animated: true, completion: nil)
     }
     
-    
+//MARK: - Table view datasource methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return itemArray.count
     }
@@ -66,7 +66,7 @@ class ToDoListViewController: UITableViewController {
         saveItems()
     }
     
-    
+//MARK: - Stuff to do with items
     func saveItems(){
         
         do{
@@ -84,11 +84,12 @@ class ToDoListViewController: UITableViewController {
         } catch {
             print("Error \(error)")
         }
+        tableView.reloadData()
     }
     
     
 }
-
+//MARK: - Seacrh bar's things
 extension ToDoListViewController: UISearchBarDelegate{
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         let request : NSFetchRequest<Item> = Item.fetchRequest()
@@ -98,6 +99,16 @@ extension ToDoListViewController: UISearchBarDelegate{
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
 
         loadItems(with: request)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0{
+            loadItems()
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+            
+        }
     }
     
 }
