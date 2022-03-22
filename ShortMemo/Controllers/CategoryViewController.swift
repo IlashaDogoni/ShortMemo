@@ -8,15 +8,22 @@
 import UIKit
 import CoreData
 
-class CategoryViewController: UITableViewController {
+class CategoryViewController: UITableViewController, UIPopoverPresentationControllerDelegate {
     
     var categoryArray = [Category]()
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
+    @IBOutlet var navigationBar: UINavigationItem!
     override func viewDidLoad() {
         super.viewDidLoad()
         loadCategories()
+        if categoryArray.first == nil{
+            let newCategory = Category(context: self.context)
+            newCategory.name = "Тест"
+            categoryArray.append(newCategory)
+            saveCategories()
+        }
     }
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
@@ -26,10 +33,10 @@ class CategoryViewController: UITableViewController {
             
             let newCategory = Category(context: self.context)
             newCategory.name = textField.text!
-            
             self.categoryArray.append(newCategory)
             self.saveCategories()
         }
+        
         alert.addTextField { (alertTextField) in
             alertTextField.placeholder = "Create new category"
             textField = alertTextField
@@ -39,34 +46,42 @@ class CategoryViewController: UITableViewController {
         present(alert, animated: true, completion: nil)
     }
     
-//MARK: - Table view datasource
+    //MARK: - Table view datasource
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return categoryArray.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
-        
         cell.textLabel?.text = categoryArray[indexPath.row].name
-        
         return cell
     }
-//MARK: - Table view delegate methods
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            context.delete(categoryArray[indexPath.row])
+            categoryArray.remove(at: indexPath.row)
+            saveCategories()
+        }
+    }
+    //MARK: - Table view delegate methods
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let destinationVC = segue.destination as! ToDoListViewController
-        if let indexPath = tableView.indexPathForSelectedRow{
-            destinationVC.selectedCategory = categoryArray[indexPath.row]
+        if segue.identifier == "popOver" {
+            let controller = segue.destination as! PopoverViewController
+            controller.modalPresentationStyle = UIModalPresentationStyle.popover
+            controller.popoverPresentationController!.delegate = self
+        } else{
+            let destinationVC = segue.destination as! ToDoListViewController
+            if let indexPath = tableView.indexPathForSelectedRow{
+                destinationVC.selectedCategory = categoryArray[indexPath.row]
+            }
         }
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
         performSegue(withIdentifier: "GoToItems", sender: self)
-        //context.delete(itemArray[indexPath.row])
-        //   itemArray.remove(at: indexPath.row)
-        
     }
-//MARK: - Stuff to do with categories
+    //MARK: - Stuff to do with categories
     func saveCategories(){
         do{
             try context.save()
@@ -85,3 +100,5 @@ class CategoryViewController: UITableViewController {
         tableView.reloadData()
     }
 }
+
+

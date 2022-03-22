@@ -16,13 +16,12 @@ class ToDoListViewController: UITableViewController {
             loadItems()
         }
     }
+    
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-       
     }
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
@@ -37,6 +36,7 @@ class ToDoListViewController: UITableViewController {
             self.itemArray.append(newItem)
             self.saveItems()
         }
+        
         alert.addTextField { (alertTextField) in
             alertTextField.placeholder = "Create new item"
             textField = alertTextField
@@ -46,7 +46,7 @@ class ToDoListViewController: UITableViewController {
         present(alert, animated: true, completion: nil)
     }
     
-//MARK: - Table view datasource methods
+    //MARK: - Table view datasource methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return itemArray.count
     }
@@ -60,19 +60,20 @@ class ToDoListViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        
-    //context.delete(itemArray[indexPath.row])
-     //   itemArray.remove(at: indexPath.row)
-        
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
-        
         saveItems()
     }
     
-//MARK: - Stuff to do with items
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            context.delete(itemArray[indexPath.row])
+            itemArray.remove(at: indexPath.row)
+            saveItems()
+        }
+    }
+    
+    //MARK: - Stuff to do with items
     func saveItems(){
-        
         do{
             try context.save()
         } catch {
@@ -82,7 +83,6 @@ class ToDoListViewController: UITableViewController {
     }
     
     func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil){
-       
         let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
         
         if let additionalPredicate = predicate{
@@ -98,18 +98,13 @@ class ToDoListViewController: UITableViewController {
         }
         tableView.reloadData()
     }
-    
-    
 }
 //MARK: - Seacrh bar's things
 extension ToDoListViewController: UISearchBarDelegate{
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         let request : NSFetchRequest<Item> = Item.fetchRequest()
-        
         let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-        
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-
         loadItems(with: request, predicate: predicate)
     }
     
@@ -119,7 +114,6 @@ extension ToDoListViewController: UISearchBarDelegate{
             DispatchQueue.main.async {
                 searchBar.resignFirstResponder()
             }
-            
         }
     }
     
