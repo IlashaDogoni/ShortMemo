@@ -15,6 +15,7 @@
 		6310932A27E5D5EB008B3CAF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6310932827E5D5EB008B3CAF /* LaunchScreen.storyboard */; };
 		633E349027E861B300E3D9EF /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 633E348E27E861B300E3D9EF /* DataModel.xcdatamodeld */; };
 		633E34B527E87C5B00E3D9EF /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633E34B427E87C5B00E3D9EF /* CategoryViewController.swift */; };
+		6343761E27EB75FF00217D49 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6343761D27EB75FF00217D49 /* Constants.swift */; };
 		63D158E027EA2E490020279A /* PopoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D158DF27EA2E490020279A /* PopoverViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -29,6 +30,7 @@
 		6310932B27E5D5EB008B3CAF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		633E348F27E861B300E3D9EF /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
 		633E34B427E87C5B00E3D9EF /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
+		6343761D27EB75FF00217D49 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		63D158DF27EA2E490020279A /* PopoverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -84,6 +86,7 @@
 		6310933427E724AB008B3CAF /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				6343761D27EB75FF00217D49 /* Constants.swift */,
 				633E34B427E87C5B00E3D9EF /* CategoryViewController.swift */,
 				6310932127E5D5EB008B3CAF /* ToDoListViewcontroller.swift */,
 				63D158DF27EA2E490020279A /* PopoverViewController.swift */,
@@ -183,6 +186,7 @@
 				633E349027E861B300E3D9EF /* DataModel.xcdatamodeld in Sources */,
 				6310932227E5D5EB008B3CAF /* ToDoListViewcontroller.swift in Sources */,
 				6310931E27E5D5EB008B3CAF /* AppDelegate.swift in Sources */,
+				6343761E27EB75FF00217D49 /* Constants.swift in Sources */,
 				63D158E027EA2E490020279A /* PopoverViewController.swift in Sources */,
 				6310932027E5D5EB008B3CAF /* SceneDelegate.swift in Sources */,
 			);

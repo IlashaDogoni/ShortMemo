@@ -52,7 +52,7 @@ class CategoryViewController: UITableViewController, UIPopoverPresentationContro
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: K.categoryCellIdentifier, for: indexPath)
         cell.textLabel?.text = categoryArray[indexPath.row].name
         return cell
     }
@@ -67,7 +67,7 @@ class CategoryViewController: UITableViewController, UIPopoverPresentationContro
     //MARK: - Table view delegate methods
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "popOver" {
+        if segue.identifier == K.seguePopover {
             let controller = segue.destination as! PopoverViewController
             controller.modalPresentationStyle = UIModalPresentationStyle.popover
             controller.popoverPresentationController!.delegate = self
@@ -79,7 +79,7 @@ class CategoryViewController: UITableViewController, UIPopoverPresentationContro
         }
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        performSegue(withIdentifier: "GoToItems", sender: self)
+        performSegue(withIdentifier: K.segueGoToItems, sender: self)
     }
     //MARK: - Stuff to do with categories
     func saveCategories(){
