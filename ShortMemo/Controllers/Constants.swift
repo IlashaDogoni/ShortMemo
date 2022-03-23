@@ -15,5 +15,7 @@ struct K{
     static let predicateMatches = "parentCategory.name MATCHES %@"
     static let predicateContains = "title CONTAINS[cd] %@"
     static let descriptorKey = "title"
-    
+    static let categoryVCtitle = "ToDoDooo"
+    static let itemCellNIBname = "ItemCell"
+    static let categoryCellNIBname = "CategoryCell"
 }
