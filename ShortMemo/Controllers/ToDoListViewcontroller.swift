@@ -21,13 +21,14 @@ class ToDoListViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        tableView.register(UINib(nibName: K.itemCellNIBname, bundle: nil), forCellReuseIdentifier: K.itemCellIdentifier)
+        navigationItem.title = selectedCategory?.name
     }
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         var textField = UITextField()
-        let alert = UIAlertController(title: "Add new item", message: "", preferredStyle: .alert)
-        let action = UIAlertAction(title: "Add item", style: .default) { action in
+        let alert = UIAlertController(title: "Добавьте новый элемент", message: "", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Добавить", style: .default) { action in
             
             let newItem = Item(context: self.context)
             newItem.title = textField.text!
@@ -38,7 +39,7 @@ class ToDoListViewController: UITableViewController {
         }
         
         alert.addTextField { (alertTextField) in
-            alertTextField.placeholder = "Create new item"
+            alertTextField.placeholder = "Название элемента"
             textField = alertTextField
         }
         
@@ -52,10 +53,10 @@ class ToDoListViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: K.itemCellIdentifier, for: indexPath) as! ItemCell
         let item = itemArray[indexPath.row]
-        cell.textLabel?.text = item.title
-        cell.accessoryType = item.done ? .checkmark : .none
+        cell.label.text = item.title
+        cell.checkmarkImageView.alpha = item.done ? 1 : 0
         return cell
     }
     
@@ -83,7 +84,7 @@ class ToDoListViewController: UITableViewController {
     }
     
     func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil){
-        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
+        let categoryPredicate = NSPredicate(format: K.predicateMatches, selectedCategory!.name!)
         
         if let additionalPredicate = predicate{
             request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
@@ -103,8 +104,8 @@ class ToDoListViewController: UITableViewController {
 extension ToDoListViewController: UISearchBarDelegate{
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         let request : NSFetchRequest<Item> = Item.fetchRequest()
-        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        let predicate = NSPredicate(format: K.predicateContains, searchBar.text!)
+        request.sortDescriptors = [NSSortDescriptor(key: K.descriptorKey, ascending: true)]
         loadItems(with: request, predicate: predicate)
     }
     

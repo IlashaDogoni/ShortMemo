@@ -4,7 +4,7 @@
 //
 //  Created by Ilya Kokorin on 21.03.2022.
 //
-
+// Да, нужно было tableViews добавлять на обычный ViewController, тогда получился бы фон для ячеек таблицы, увы, просмотрел, сейчас времени уже нет:(
 import UIKit
 import CoreData
 
@@ -17,6 +17,8 @@ class CategoryViewController: UITableViewController, UIPopoverPresentationContro
     @IBOutlet var navigationBar: UINavigationItem!
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.register(UINib(nibName: K.categoryCellNIBname, bundle: nil), forCellReuseIdentifier: K.categoryCellIdentifier)
+        navigationItem.title = K.categoryVCtitle
         loadCategories()
         if categoryArray.first == nil{
             let newCategory = Category(context: self.context)
@@ -28,8 +30,8 @@ class CategoryViewController: UITableViewController, UIPopoverPresentationContro
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         var textField = UITextField()
-        let alert = UIAlertController(title: "Add new category", message: "", preferredStyle: .alert)
-        let action = UIAlertAction(title: "Add category", style: .default) { action in
+        let alert = UIAlertController(title: "Добавьте новую категорию", message: "", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Добавить", style: .default) { action in
             
             let newCategory = Category(context: self.context)
             newCategory.name = textField.text!
@@ -38,7 +40,7 @@ class CategoryViewController: UITableViewController, UIPopoverPresentationContro
         }
         
         alert.addTextField { (alertTextField) in
-            alertTextField.placeholder = "Create new category"
+            alertTextField.placeholder = "Название категории"
             textField = alertTextField
         }
         
@@ -52,8 +54,8 @@ class CategoryViewController: UITableViewController, UIPopoverPresentationContro
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
-        cell.textLabel?.text = categoryArray[indexPath.row].name
+        let cell = tableView.dequeueReusableCell(withIdentifier: K.categoryCellIdentifier, for: indexPath) as! CategoryCell
+        cell.label.text = categoryArray[indexPath.row].name
         return cell
     }
     
@@ -67,7 +69,7 @@ class CategoryViewController: UITableViewController, UIPopoverPresentationContro
     //MARK: - Table view delegate methods
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "popOver" {
+        if segue.identifier == K.seguePopover {
             let controller = segue.destination as! PopoverViewController
             controller.modalPresentationStyle = UIModalPresentationStyle.popover
             controller.popoverPresentationController!.delegate = self
@@ -79,7 +81,7 @@ class CategoryViewController: UITableViewController, UIPopoverPresentationContro
         }
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        performSegue(withIdentifier: "GoToItems", sender: self)
+        performSegue(withIdentifier: K.segueGoToItems, sender: self)
     }
     //MARK: - Stuff to do with categories
     func saveCategories(){
