@@ -74,7 +74,7 @@ class CategoryViewController: UITableViewController, UIPopoverPresentationContro
             controller.modalPresentationStyle = UIModalPresentationStyle.popover
             controller.popoverPresentationController!.delegate = self
         } else{
-            let destinationVC = segue.destination as! ToDoListViewController
+            let destinationVC = segue.destination as! ToDoViewController
             if let indexPath = tableView.indexPathForSelectedRow{
                 destinationVC.selectedCategory = categoryArray[indexPath.row]
             }
