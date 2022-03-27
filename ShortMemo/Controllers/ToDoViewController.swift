@@ -1,14 +1,18 @@
 //
-//  ViewController.swift
+//  ToDoViewController.swift
 //  ShortMemo
 //
-//  Created by Ilya Kokorin on 19.03.2022.
+//  Created by Ilya Kokorin on 26.03.2022.
 //
 
 import UIKit
 import CoreData
 
-class ToDoListViewController: UITableViewController {
+class ToDoViewController: UIViewController {
+    
+    
+    @IBOutlet var searchBar: UISearchBar!
+    @IBOutlet var tableView: UITableView!
     
     var itemArray = [Item]()
     var selectedCategory : Category?{
@@ -20,6 +24,9 @@ class ToDoListViewController: UITableViewController {
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
+        tableView.dataSource = self
+        tableView.delegate = self
+        searchBar.delegate = self
         super.viewDidLoad()
         tableView.register(UINib(nibName: K.itemCellNIBname, bundle: nil), forCellReuseIdentifier: K.itemCellIdentifier)
         navigationItem.title = selectedCategory?.name
@@ -47,32 +54,6 @@ class ToDoListViewController: UITableViewController {
         present(alert, animated: true, completion: nil)
     }
     
-    //MARK: - Table view datasource methods
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return itemArray.count
-    }
-    
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: K.itemCellIdentifier, for: indexPath) as! ItemCell
-        let item = itemArray[indexPath.row]
-        cell.label.text = item.title
-        cell.checkmarkImageView.alpha = item.done ? 1 : 0
-        return cell
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
-        saveItems()
-    }
-    
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            context.delete(itemArray[indexPath.row])
-            itemArray.remove(at: indexPath.row)
-            saveItems()
-        }
-    }
-    
     //MARK: - Stuff to do with items
     func saveItems(){
         do{
@@ -97,11 +78,40 @@ class ToDoListViewController: UITableViewController {
         } catch {
             print("Error \(error)")
         }
-        tableView.reloadData()
+        tableView?.reloadData()
     }
 }
-//MARK: - Seacrh bar's things
-extension ToDoListViewController: UISearchBarDelegate{
+
+extension ToDoViewController : UITableViewDelegate{
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
+        saveItems()
+    }
+}
+
+extension ToDoViewController : UITableViewDataSource{
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return itemArray.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: K.itemCellIdentifier, for: indexPath) as! ItemCell
+        let item = itemArray[indexPath.row]
+        cell.label.text = item.title
+        cell.checkmarkImageView.alpha = item.done ? 1 : 0
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            context.delete(itemArray[indexPath.row])
+            itemArray.remove(at: indexPath.row)
+            saveItems()
+        }
+    }
+}
+
+extension ToDoViewController: UISearchBarDelegate{
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         let request : NSFetchRequest<Item> = Item.fetchRequest()
         let predicate = NSPredicate(format: K.predicateContains, searchBar.text!)
@@ -117,5 +127,4 @@ extension ToDoListViewController: UISearchBarDelegate{
             }
         }
     }
-    
 }
