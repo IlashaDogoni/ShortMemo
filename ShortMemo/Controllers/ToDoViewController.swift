@@ -9,11 +9,11 @@ import UIKit
 import CoreData
 
 class ToDoViewController: UIViewController {
-
+    
     
     @IBOutlet var searchBar: UISearchBar!
- 
     @IBOutlet var tableView: UITableView!
+    
     var itemArray = [Item]()
     var selectedCategory : Category?{
         didSet{
@@ -24,10 +24,10 @@ class ToDoViewController: UIViewController {
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
-        super.viewDidLoad()
         tableView.dataSource = self
         tableView.delegate = self
         searchBar.delegate = self
+        super.viewDidLoad()
         tableView.register(UINib(nibName: K.itemCellNIBname, bundle: nil), forCellReuseIdentifier: K.itemCellIdentifier)
         navigationItem.title = selectedCategory?.name
     }
@@ -83,18 +83,18 @@ class ToDoViewController: UIViewController {
 }
 
 extension ToDoViewController : UITableViewDelegate{
-     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         saveItems()
     }
 }
 
 extension ToDoViewController : UITableViewDataSource{
-     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return itemArray.count
     }
     
-     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: K.itemCellIdentifier, for: indexPath) as! ItemCell
         let item = itemArray[indexPath.row]
         cell.label.text = item.title
@@ -102,15 +102,15 @@ extension ToDoViewController : UITableViewDataSource{
         return cell
     }
     
-     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             context.delete(itemArray[indexPath.row])
             itemArray.remove(at: indexPath.row)
             saveItems()
         }
+    }
 }
-}
-    
+
 extension ToDoViewController: UISearchBarDelegate{
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         let request : NSFetchRequest<Item> = Item.fetchRequest()
@@ -127,5 +127,4 @@ extension ToDoViewController: UISearchBarDelegate{
             }
         }
     }
-    
 }
